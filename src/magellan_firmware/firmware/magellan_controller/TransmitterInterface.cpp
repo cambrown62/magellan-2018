@@ -27,6 +27,7 @@ void TransmitterInterface::Update() {
 
         // Center around 0
         throttle_percent_ -= 0.5;
+        throttle_percent_ *= 2.0;
 
         steering_angle_ = channels_[1]-1000;
         // Scale -90 to +90

@@ -7,6 +7,11 @@ Robot::Robot(ros::NodeHandle& nh) :
     heartbeat_(),
     throttle_pwm_(ESC_PWM),
     steering_pwm_(SERVO_PWM),
+    left_motor_a(20),
+    left_motor_b(21),
+    right_motor_a(22),
+    right_motor_b(23),
+
     throttle_subscriber_("/platform/throttle", &Robot::UpdateThrottle, this),
     throttle_percent_(0.0),
     steering_subscriber_("/platform/steering", &Robot::UpdateSteering, this),
@@ -25,6 +30,29 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+    double throttle = transmitter_.throttle_percent();
+    double turn = transmitter_.steering_angle() / 90.0;
+
+    if ( fabs(throttle) < 0.15 )
+        throttle = 0;
+    else
+        turn -= 0.101;
+
+    if ( fabs(turn) < 0.1 )
+        turn = 0;
+
+    double left = throttle - turn;
+    double right = throttle + turn;
+
+
+    right = -right;
+
+    left_motor_a.Set(left);
+    left_motor_b.Set(left);
+
+    right_motor_a.Set(right);
+    right_motor_b.Set(right);
+    return;
     // Get the throttle percent from the Transmitter Interface and pass it to PWM
     throttle_pwm_.Set(transmitter_.throttle_percent());
 
@@ -33,6 +61,11 @@ void Robot::TeleopPeriodic() {
 }
 
 void Robot::AutonomousInit() {
+    left_motor_a.Set(0);
+    left_motor_b.Set(0);
+
+    right_motor_a.Set(0);
+    right_motor_b.Set(0);
     steering_pwm_.Set(0.0);
     throttle_pwm_.Set(0.0);
 
@@ -51,6 +84,11 @@ void Robot::DisabledInit() {
 }
 
 void Robot::DisabledPeriodic() {
+    left_motor_a.Set(0);
+    left_motor_b.Set(0);
+
+    right_motor_a.Set(0);
+    right_motor_b.Set(0);
 }
 
 void Robot::UpdateThrottle(const std_msgs::Float64& cmd_throttle_percent_) {
