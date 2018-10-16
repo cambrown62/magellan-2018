@@ -30,25 +30,33 @@ static void SetupEncoderISR() {
 EncoderPublisher::EncoderPublisher(ros::NodeHandle& nh) :
         nh_(nh),
         encoder_msg_(),
-        encoder_publisher_("/platform/encoders", &encoder_msg_) {
+        encoder_publisher_("/platform/encoders", &encoder_msg_),
+        update_rate_(ENCODER_UPDATE_HZ) {
     SetupEncoderISR();
 
     nh.advertise(encoder_publisher_);
 }
 
-void EncoderPublisher::Update() {
-    // Atomic region
-    cli();
-    long int delta_left = left_encoder_count;
-    long int delta_right = right_encoder_count;
+void EncoderPublisher::Update(bool forward) {
+    if ( update_rate_.NeedsRun() ) {
+        // Atomic region
+        cli();
+        long int left_delta = left_encoder_count;
+        long int right_delta = right_encoder_count;
 
-    left_encoder_count = 0;
-    right_encoder_count = 0;
-    sei();
+        left_encoder_count = 0;
+        right_encoder_count = 0;
+        sei();
 
-    encoder_msg_.header.stamp = nh_.now();
-    encoder_msg_.delta_left = delta_left;
-    encoder_msg_.delta_right = delta_right;
+        if (!forward) {
+            left_delta *= -1;
+            right_delta *= -1;
+        }
 
-    encoder_publisher_.publish(&encoder_msg_);
+        encoder_msg_.header.stamp = nh_.now();
+        encoder_msg_.left_delta = left_delta;
+        encoder_msg_.right_delta = right_delta;
+
+        encoder_publisher_.publish(&encoder_msg_);
+    }
 }

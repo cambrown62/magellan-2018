@@ -18,6 +18,7 @@ extern RobotState currentState;
 // Loop rates
 #define MAIN_LOOP_HZ 100
 #define XBEE_LOOP_HZ 3
+#define ENCODER_UPDATE_HZ 50
 #define DEBUG_LOOP_HZ 5
 
 #define ESC_PWM 3 // Throttle
@@ -32,5 +33,11 @@ extern RobotState currentState;
 
 #define LEFT_ENCODER 20
 #define RIGHT_ENCODER 22
+
+#define TRACKLENGTH 0.3175
+#define TRACKWIDTH 0.254
+
+const constexpr double kIMUAccelVariance[2] = {100, 100};
+const constexpr double kIMUOrientationVariance[2] = {1e-5, 1e-5};
 
 #endif
