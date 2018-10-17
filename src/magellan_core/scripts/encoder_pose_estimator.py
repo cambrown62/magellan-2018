@@ -8,7 +8,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Pose, PoseWithCovariance
 from magellan_core.msg import EncoderDeltaStamped
 
-class EncoderPoseEstimator:
+class EncoderPoseEstimator(object):
     def __init__(self):
         self._lock = RLock()
         with self._lock:
