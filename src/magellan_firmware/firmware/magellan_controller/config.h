@@ -34,7 +34,9 @@ extern RobotState currentState;
 #define LEFT_ENCODER 20
 #define RIGHT_ENCODER 22
 
+// Distance from front wheel to back wheel
 #define TRACKLENGTH 0.3175
+// Distance from left wheel to right wheel
 #define TRACKWIDTH 0.254
 
 const constexpr double kIMUAccelVariance[2] = {100, 100};

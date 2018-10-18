@@ -40,6 +40,7 @@ double Drivetrain::GetPercentForSteeringAngle(double angle) {
     return angle / 30.0;
 }
 
+// Returns radius of imaginary circle the car is driving along while turning
 double Drivetrain::GetTurningRadius(double percent) {
     if ( percent == 0 )
         return 0;

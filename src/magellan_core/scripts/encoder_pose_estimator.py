@@ -50,7 +50,10 @@ class EncoderPoseEstimator(object):
             if self._turning_radius == 0:
                 robot_delta[0] = avg_displacement
             else:
-                pass
+                # Arc length formula
+                theta = avg_displacement / self._turning_radius
+                robot_delta[0] = abs(self._turning_radius) * sin(theta)
+                robot_delta[1] = self._turning_radius * (1 - cos(theta))
 
             world_delta = [
                 robot_delta[0]*cos(heading) - robot_delta[1]*sin(heading),
