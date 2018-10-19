@@ -31,10 +31,15 @@ EncoderPublisher::EncoderPublisher(ros::NodeHandle& nh) :
         nh_(nh),
         encoder_msg_(),
         encoder_publisher_("/platform/encoders", &encoder_msg_),
+        velocity_publisher_("/platform/velocity", &twist_msg_),
         update_rate_(ENCODER_UPDATE_HZ) {
     SetupEncoderISR();
 
     nh.advertise(encoder_publisher_);
+    nh.advertise(velocity_publisher_);
+
+    twist_msg_.header.frame_id = "base_link";
+    twist_msg_.twist.covariance[0] = 1;
 }
 
 void EncoderPublisher::Update(bool forward) {
@@ -56,6 +61,12 @@ void EncoderPublisher::Update(bool forward) {
         encoder_msg_.header.stamp = nh_.now();
         encoder_msg_.left_delta = left_delta;
         encoder_msg_.right_delta = right_delta;
+
+        double avg_speed = ((left_delta+right_delta)/2.0) * kDistancePerTick / (1.0/ENCODER_UPDATE_HZ);
+        twist_msg_.header.stamp = nh_.now();
+        twist_msg_.twist.twist.linear.x = avg_speed;
+
+        velocity_publisher_.publish(&twist_msg_);
 
         encoder_publisher_.publish(&encoder_msg_);
     }

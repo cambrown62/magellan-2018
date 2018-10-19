@@ -60,8 +60,7 @@ void IMU::Update() {
         imu_msg_.angular_velocity.y = angular_velocity.y();
         imu_msg_.angular_velocity.z = angular_velocity.z();
 
-        imu_msg_.orientation_covariance[0] = kIMUOrientationVariance[0];
-        imu_msg_.orientation_covariance[4] = kIMUOrientationVariance[1];
+        imu_msg_.orientation_covariance[9] = kIMUOrientationVariance[0];
 
         imu_msg_.linear_acceleration_covariance[0] = kIMUAccelVariance[0];
         imu_msg_.linear_acceleration_covariance[4] = kIMUAccelVariance[1];

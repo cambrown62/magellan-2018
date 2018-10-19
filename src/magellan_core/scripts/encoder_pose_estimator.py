@@ -5,7 +5,7 @@ from math import sin, cos, pi
 import rospy
 import tf
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Pose, PoseWithCovariance
+from geometry_msgs.msg import Pose, PoseWithCovariance, TwistWithCovarianceStamped
 from magellan_core.msg import EncoderDeltaStamped
 
 class EncoderPoseEstimator(object):
@@ -14,17 +14,19 @@ class EncoderPoseEstimator(object):
         with self._lock:
             self._odom_sub = rospy.Subscriber("/odometry/filtered", Odometry, self._update_robot_localization_odom)
             self._odom_pub = rospy.Publisher("/odometry/encoders", Odometry, queue_size=3)
+            self._twist_pub = rospy.Publisher("/odometry/velocity", TwistWithCovarianceStamped, queue_size=3)
             self._encoder_sub = rospy.Subscriber("/platform/encoders", EncoderDeltaStamped, self._update_encoder_delta)
 
             self._encoder_cpr = 10
             self._wheel_diameter = 0.075
             self._one_tick_distance = (pi*self._wheel_diameter) / self._encoder_cpr
 
-            self._turn_radius_sub = rospy.Subscriber("/platform/turning_radius", Float64, self._update_turning_radius)
+            #self._turn_radius_sub = rospy.Subscriber("/platform/turning_radius", Float64, self._update_turning_radius)
             self._robot_localization_odom = Odometry()
             self._turning_radius = 0
-            self._odom_covariance = 0.1
+            self._odom_covariance = 1e-2
             self._world_position = [0, 0]
+            self._last_time = rospy.Time.now().to_sec()
 
     def _update_robot_localization_odom(self, odom):
         with self._lock:
@@ -55,6 +57,18 @@ class EncoderPoseEstimator(object):
                 robot_delta[0] = abs(self._turning_radius) * sin(theta)
                 robot_delta[1] = self._turning_radius * (1 - cos(theta))
 
+            now = rospy.Time.now().to_sec()
+            delta_time = now - self._last_time
+            twist = TwistWithCovarianceStamped()
+            twist.header.stamp = rospy.Time.now()
+            twist.header.frame_id = 'base_link'
+            twist.twist.covariance[0] = 1;
+
+            twist.twist.twist.linear.x = avg_displacement / delta_time
+            self._last_time = now
+
+            self._twist_pub.publish(twist)
+
             world_delta = [
                 robot_delta[0]*cos(heading) - robot_delta[1]*sin(heading),
                 robot_delta[0]*sin(heading) + robot_delta[1]*cos(heading)
@@ -70,7 +84,7 @@ class EncoderPoseEstimator(object):
             new_odom.pose.pose.position.x = self._world_position[0]
             new_odom.pose.pose.position.y = self._world_position[1]
 
-            self._odom_pub.publish(new_odom)
+            #self._odom_pub.publish(new_odom)
 
 rospy.init_node('encoder_pose_estimator')
 node = EncoderPoseEstimator()
