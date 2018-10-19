@@ -41,6 +41,6 @@ extern RobotState currentState;
 
 const constexpr double kIMUAccelVariance[2] = {100, 100};
 const constexpr double kIMUOrientationVariance[2] = {1e-5, 1e-5};
-const constexpr double kDistancePerTick = (0.075*3.14) / 10.0;
+const constexpr double kDistancePerTick = (0.075 * 3.14) / 10.0;
 
 #endif
