@@ -18,7 +18,7 @@ extern RobotState currentState;
 // Loop rates
 #define MAIN_LOOP_HZ 100
 #define XBEE_LOOP_HZ 3
-#define ENCODER_UPDATE_HZ 50
+#define ENCODER_UPDATE_HZ 60
 #define DEBUG_LOOP_HZ 5
 
 #define ESC_PWM 3 // Throttle
@@ -39,8 +39,9 @@ extern RobotState currentState;
 // Distance from left wheel to right wheel
 #define TRACKWIDTH 0.254
 
-const constexpr double kIMUAccelVariance[2] = {100, 100};
-const constexpr double kIMUOrientationVariance[2] = {1e-5, 1e-5};
+const constexpr double kIMUAccelVariance[2] = {10, 10};
+const constexpr double kIMUOrientationVariance = 1e-5;
+const constexpr double kVelocityVariance = 1;
 const constexpr double kDistancePerTick = (0.075 * 3.14) / 10.0;
 
 #endif

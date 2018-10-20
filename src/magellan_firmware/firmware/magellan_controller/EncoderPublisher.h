@@ -17,6 +17,8 @@ private:
     geometry_msgs::TwistWithCovarianceStamped twist_msg_;
     ros::Publisher velocity_publisher_;
     Rate update_rate_;
+    long int last_left_count_;
+    long int last_right_count_;
 };
 
 #endif
