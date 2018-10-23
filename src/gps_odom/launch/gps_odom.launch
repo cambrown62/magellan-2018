@@ -1,5 +1,0 @@
-<launch>
-    <node type="gps_odom_node" name="gps_odom_node" pkgs="gps_dom">
-        <remap from="odometry/gps/raw" to="odometry/filtered" />
-    </node>
-</launch>
