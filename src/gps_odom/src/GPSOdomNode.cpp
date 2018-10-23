@@ -1,7 +1,6 @@
 #include <ros/ros.h>
 #include "GPSOdom.h"
 
-
 int main(int argc, char** argv) {
     ros::init(argc, argv, "gps_odom");
     ros::NodeHandle nh;
