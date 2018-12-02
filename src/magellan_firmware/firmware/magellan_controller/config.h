@@ -41,8 +41,8 @@ const constexpr double kTrackWidth = 0.254;
 // Max velocity
 const constexpr double kMaxVelocity = 3.0;
 
-// Max turning angle of the inside wheel in a turn
-const constexpr double kMaxTurningAngle = M_PI / 6.0;
+// Max turning angle of the imaginary center wheel
+const constexpr double kMaxTurningAngle = 0.439;
 
 const constexpr double kIMUAccelVariance[2] = {10, 10};
 const constexpr double kIMUOrientationVariance = 1e-5;

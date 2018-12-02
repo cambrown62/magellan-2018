@@ -2,9 +2,11 @@
 import math
 import rospy
 import numpy as np
+from tf.transformations import quaternion_from_euler
+from math import degrees
 
 from nav_msgs.msg import Path
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Quaternion
 
 
 class FakePathNode(object):
@@ -33,10 +35,16 @@ class FakePathNode(object):
 
             plan = zip(np.linspace(last[0], curr[0], num_steps), np.linspace(last[1], curr[1], num_steps))
 
+            #path_heading = quaternion_from_euler(0, 0, np.arctan2(curr[0]-last[0], curr[1]-last[1]))
+            path_heading = quaternion_from_euler(0, 0, np.arctan2(curr[1]-last[1], curr[0]-last[0]))
+            path_heading = Quaternion(path_heading[0], path_heading[1], path_heading[2], path_heading[3])
+
             for point in plan:
                 pose_msg = PoseStamped()
                 pose_msg.pose.position.x = point[0]
                 pose_msg.pose.position.y = point[1]
+
+                pose_msg.pose.orientation = path_heading
                 path_msg.poses.append(pose_msg)
 
             last = curr

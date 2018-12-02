@@ -18,15 +18,17 @@ public:
     double GetSteeringAngleForPercent(double percent);
     double GetPercentForSteeringAngle(double angle);
     double GetTurningRadius(double percent);
-    double GetSteeringAngle(double radius);
+
+    void Update();
 private:
-    double last_commanded_percent_;
+    double last_commanded_throttle_;
+    double last_commanded_steering_;
     ros::NodeHandle& nh_;
     PWM throttle_pwm_;
     PWM steering_pwm_;
 
-    std_msgs::Float64 steering_angle_msg_;
-    ros::Publisher steering_angle_publisher_;
+    std_msgs::Float64 turning_radius_msg_;
+    ros::Publisher turning_radius_publisher_;
 };
 
 #endif

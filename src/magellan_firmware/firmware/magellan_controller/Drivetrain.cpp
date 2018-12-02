@@ -3,30 +3,30 @@
 #include <cmath>
 
 Drivetrain::Drivetrain(ros::NodeHandle& nh) :
-        last_commanded_percent_(0),
+        last_commanded_throttle_(0),
+        last_commanded_steering_(0),
         nh_(nh),
         throttle_pwm_(ESC_PWM),
         steering_pwm_(SERVO_PWM),
-        steering_angle_msg_(),
-        steering_angle_publisher_("/platform/turning_radius", &steering_angle_msg_) {
+        turning_radius_msg_(),
+        turning_radius_publisher_("/platform/turning_radius", &turning_radius_msg_) {
     throttle_pwm_.ConfigLowLimit(THROTTLE_MIN);
     steering_pwm_.ConfigOffset(STEERING_OFFSET);
     steering_pwm_.ConfigLowLimit(STEERING_MIN);
 
-    nh.advertise(steering_angle_publisher_);
+    nh.advertise(turning_radius_publisher_);
 }
 
 void Drivetrain::SetThrottlePercent(double percent) {
     throttle_pwm_.Set(percent);
 
     if ( fabs(percent) > 0.1 )
-        last_commanded_percent_ = percent;
+        last_commanded_throttle_ = percent;
 }
 
 void Drivetrain::SetSteeringPercent(double percent) {
     steering_pwm_.Set(percent);
-    steering_angle_msg_.data = GetTurningRadius(percent);
-    steering_angle_publisher_.publish(&steering_angle_msg_);
+    last_commanded_steering_ = percent;
 }
 
 void Drivetrain::SetSteeringAngle(double angle) {
@@ -48,14 +48,14 @@ double Drivetrain::GetTurningRadius(double percent) {
     if ( percent == 0 )
         return 0;
 
-    double angle = GetSteeringAngleForPercent(percent);
-    return kTrackLength * (1.0 / tan(angle)) + (kTrackWidth / 2.0);
-}
-
-double Drivetrain::GetSteeringAngle(double radius) {
-    return std::copysign(atan(kTrackLength / (std::abs(radius) + (kTrackWidth / 2))), radius);
+    return kTrackLength * (1.0 / tan(GetSteeringAngleForPercent(percent)));
 }
 
 bool Drivetrain::DirectionIsForward() {
-    return last_commanded_percent_ >= 0;
+    return last_commanded_throttle_ >= 0;
+}
+
+void Drivetrain::Update() {
+    turning_radius_msg_.data = GetTurningRadius(last_commanded_steering_);
+    turning_radius_publisher_.publish(&turning_radius_msg_);
 }

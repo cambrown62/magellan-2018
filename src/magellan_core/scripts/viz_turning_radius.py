@@ -14,7 +14,7 @@ rospy.init_node("viz_turning_radius")
 class TurningRadiusVisualization:
     def __init__(self):
         self._marker_pub = rospy.Publisher("/markers/turning_radius", Marker, queue_size=3)
-        self._turning_radius_sub = rospy.Subscriber("/platform/cmd_turning_radius", Float64, self.update_turning_radius)
+        self._turning_radius_sub = rospy.Subscriber("/platform/turning_radius", Float64, self.update_turning_radius)
 
         self._marker = Marker()
         self._marker.header.frame_id = 'base_link'
@@ -38,7 +38,7 @@ class TurningRadiusVisualization:
             stop.z = 0
             return [start, stop]
         points = []
-        invert = np.sign(self._radius)
+        invert = -np.sign(self._radius)
         radius = np.abs(self._radius)
         for angle in np.linspace(pi/2, 0):
             point = Point()

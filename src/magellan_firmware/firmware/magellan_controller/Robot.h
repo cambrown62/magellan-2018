@@ -8,7 +8,7 @@
 #include <ros.h>
 #include "HeartbeatLED.h"
 #include "PWM.h"
-#include <std_msgs/Float64.h>
+#include <magellan_core/ActuatorCommand.h>
 #include "IMU.h"
 #include "EncoderPublisher.h"
 #include "Drivetrain.h"
@@ -24,18 +24,15 @@ public:
     void DisabledInit();
     void DisabledPeriodic();
     void AlwaysPeriodic();
-    void UpdateThrottle(const std_msgs::Float64& cmd_throttle_percent_);
-    void UpdateSteering(const std_msgs::Float64& cmd_steering_angle_);
-
+    void UpdateActuators(const magellan_core::ActuatorCommand& cmd_actuators);
     void Update();
 private:
     RobotState current_state_;
     ros::NodeHandle& nh_;
     TransmitterInterface transmitter_;
     HeartbeatLED heartbeat_;
-    ros::Subscriber<std_msgs::Float64, Robot> throttle_subscriber_;
+    ros::Subscriber<magellan_core::ActuatorCommand, Robot> command_subscriber_;
     float throttle_percent_;
-    ros::Subscriber<std_msgs::Float64, Robot> steering_subscriber_;
     float steering_angle_;
     IMU imu_;
     EncoderPublisher encoder_publisher_;

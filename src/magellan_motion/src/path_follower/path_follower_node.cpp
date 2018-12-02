@@ -11,13 +11,6 @@ int main(int argc, char** argv) {
     private_nh.getParam("rate", rate_hz);
     ros::Rate rate(rate_hz);
 
-    double lookahead_distance;
-    if ( !private_nh.getParam("lookahead_distance", lookahead_distance) ) {
-        ROS_ERROR("lookahead_distance param unset");
-        ros::shutdown();
-        return 0;
-    }
-
     double discretization;
     if ( !private_nh.getParam("discretization", discretization) ) {
         ROS_ERROR("discretization param unset");
@@ -39,7 +32,21 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    PathFollower path_follower(nh, discretization, lookahead_distance, max_velocity, max_acceleration);
+    double kP;
+    if ( !private_nh.getParam("kP", kP) ) {
+        ROS_ERROR("kP constant param unset");
+        ros::shutdown();
+        return 0;
+    }
+
+    double kD;
+    if ( !private_nh.getParam("kD", kD) ) {
+        ROS_ERROR("kD constant param unset");
+        ros::shutdown();
+        return 0;
+    }
+
+    PathFollower path_follower(nh, discretization, max_velocity, max_acceleration, kP, kD);
 
     while (ros::ok()) {
         try {

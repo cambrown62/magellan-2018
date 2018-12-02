@@ -8,9 +8,7 @@
 class PathMarkers {
 public:
     PathMarkers(ros::NodeHandle& nh, int marker_hz);
-    void UpdateLookahead(geometry_msgs::PoseStamped& pose);
-    void UpdateClosestPoint(geometry_msgs::PoseStamped& pose);
-    void Update();
+    void Update(geometry_msgs::PoseStamped& pose, geometry_msgs::PoseStamped& lookahead_pose);
 private:
     ros::NodeHandle& nh_;
     ros::Duration update_period_;

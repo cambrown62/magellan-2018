@@ -7,7 +7,7 @@ project(magellan_motion)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp tf2_ros visualization_msgs)
+find_package(catkin REQUIRED roscpp tf2_ros visualization_msgs magellan_core)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
