@@ -17,6 +17,9 @@ MagellanSim::MagellanSim(ros::NodeHandle& nh) :
     time_ = ros::Time::now();
 }
 
+/*
+ * Member function to have the sim update and publish simulated values
+ */
 void MagellanSim::Update() {
     UpdateVelocity();
     UpdateYaw();
@@ -38,7 +41,7 @@ void MagellanSim::UpdateYaw() {
 /*
  * Updates commanded velocity from message and then updates sim's velocity
  * This member function just calculates the ideal velocity 
- * At this point, this member functions has no upper limit on the vehicle
+ * At this point, this member function has no upper limit on the vehicle
  */
 void MagellanSim::UpdateThrottle(const std_msgs::Float64& cmd_velocity) {
     commanded_velocity_ = cmd_velocity.data;
@@ -54,7 +57,7 @@ void MagellanSim::UpdateThrottle(const std_msgs::Float64& cmd_velocity) {
 }
 
 /*
- * Updates commanded velocity from message and udpates sim turning cmd_turning_radius
+ * Updates commanded velocity from message and upodates sim's turning radius
  * At this point the sim just immediately matches the commanded turning cmd_radius
  */ 
 void MagellanSim::UpdateSteering(const std_msgs::Float64& cmd_radius) {
