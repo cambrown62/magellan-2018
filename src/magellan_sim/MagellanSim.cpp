@@ -1,12 +1,12 @@
 #include "MagellanSim.h"
 
 MagellanSim::MagellanSim(ros::NodeHandle& nh) :
-    node_handle_(nh),
-    commanded_velocity_(0.0),
-    commanded_radius_(0.0),
-    velocity_(0.0),
-    steering_angle_(0.0) {
-    throttle_subscriber_ = 
+        node_handle_(nh),
+        commanded_velocity_(0.0),
+        commanded_radius_(0.0),
+        velocity_(0.0),
+        steering_angle_(0.0) {
+    throttle_subscriber_ =
         node_handle_.subscribe("/platform/cmd_velocity", 1, &MagellanSim::UpdateThrottle, this);
     steering_subscriber_ =
         node_handle_.subscribe("platform/cmd_turning_radius", 1, &MagellanSim::UpdateSteering, this);
@@ -40,18 +40,18 @@ void MagellanSim::UpdateYaw() {
 
 /*
  * Updates commanded velocity from message and then updates sim's velocity
- * This member function just calculates the ideal velocity 
+ * This member function just calculates the ideal velocity
  * At this point, this member function has no upper limit on the vehicle
  */
 void MagellanSim::UpdateThrottle(const std_msgs::Float64& cmd_velocity) {
     commanded_velocity_ = cmd_velocity.data;
-    // NOTE TO SELF: it probably just sufficient to match velocity and 
+    // NOTE TO SELF: it probably just sufficient to match velocity and
     // not bother with the physics equations
     ros::Time current_time = ros::Time::now();
     double sim_accel = 3.5765; // acceleration, 0-40 in 5 seconds
     if (commanded_velocity_ - velocity_ > 0.005) {
         ros::Duration delta_time = current_time - time_;
-        velocity_ += sim_accel*delta_time.toSec();
+        velocity_ += sim_accel * delta_time.toSec();
     }
     time_ = current_time;
 }
@@ -59,7 +59,7 @@ void MagellanSim::UpdateThrottle(const std_msgs::Float64& cmd_velocity) {
 /*
  * Updates commanded velocity from message and upodates sim's turning radius
  * At this point the sim just immediately matches the commanded turning cmd_radius
- */ 
+ */
 void MagellanSim::UpdateSteering(const std_msgs::Float64& cmd_radius) {
     commanded_radius_ = cmd_radius.data;
 }
