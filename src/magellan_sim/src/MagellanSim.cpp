@@ -5,7 +5,8 @@ MagellanSim::MagellanSim(ros::NodeHandle& nh) :
         commanded_velocity_(0.0),
         commanded_radius_(0.0),
         velocity_(0.0),
-        steering_angle_(0.0) {
+        steering_angle_(0.0),
+        refresh_rate_(0.0) {
     throttle_subscriber_ =
         node_handle_.subscribe("/platform/cmd_velocity", 1, &MagellanSim::UpdateThrottle, this);
     steering_subscriber_ =
@@ -16,7 +17,6 @@ MagellanSim::MagellanSim(ros::NodeHandle& nh) :
         node_handle_.advertise<std_msgs::Float64>("/platform/turning_radius", 1, true);
     refresh_rate_ = ros::Rate(10);
     time_ = ros::Time::now();
-    refresh_rate_ = ros::Rate(10);
 }
 
 void MagellanSim::run() {

@@ -1,9 +1,9 @@
 #ifndef MAGELLANSIM_H_
 #define MAGELLANSIM_H_
 
-#include <ros.h>
-#include <time.h>
-#include <duration.h>
+#include <ros/ros.h>
+#include <ros/time.h>
+#include <ros/duration.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
 
