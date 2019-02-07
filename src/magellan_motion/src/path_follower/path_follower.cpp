@@ -3,6 +3,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <magellan_core/ActuatorCommand.h>
 #include <optional>
+#include <cmath>
 
 static inline double L2Norm(const geometry_msgs::PoseStamped& pose) {
     return std::sqrt(pose.pose.position.x * pose.pose.position.x + pose.pose.position.y * pose.pose.position.y);
@@ -19,6 +20,10 @@ PathFollower::PathFollower(ros::NodeHandle& nh,
                            double kP,
                            double kD) :
         kP_(kP),
+<<<<<<< Updated upstream
+=======
+        stanley_gain_(stanley_gain),
+>>>>>>> Stashed changes
         kD_(kD),
         nh_(nh),
         tf_buffer_(),
@@ -91,7 +96,8 @@ void PathFollower::Update() {
 
     double linear_velocity = L2Norm(current_odom_->twist.twist.linear);
 
-    command.steering_angle = std::copysign(lookahead_pose.pose.position.x * kP_, -lookahead_pose.pose.position.y);
+    //command.steering_angle = std::copysign(lookahead_pose.pose.position.x * kP_, -lookahead_pose.pose.position.y);
+    command.steering_angle = robot_heading + atan(stanley_gain * cross_track_error / linear_velocity);
 
 
     double estimated_remaining_distance = points_to_end * discretization_;
