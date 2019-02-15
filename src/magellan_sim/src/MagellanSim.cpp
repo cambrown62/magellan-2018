@@ -6,7 +6,7 @@ MagellanSim::MagellanSim(ros::NodeHandle& nh) :
         commanded_radius_(0.0),
         velocity_(0.0),
         steering_angle_(0.0),
-        refresh_rate_(0.0) {
+        refresh_rate_(10.0) {
     throttle_subscriber_ =
         node_handle_.subscribe("/platform/cmd_velocity", 1, &MagellanSim::UpdateThrottle, this);
     steering_subscriber_ =
@@ -15,7 +15,6 @@ MagellanSim::MagellanSim(ros::NodeHandle& nh) :
         node_handle_.advertise<geometry_msgs::TwistWithCovarianceStamped>("/platform/velocity", 1, true);
     turning_radius_publisher_ =
         node_handle_.advertise<std_msgs::Float64>("/platform/turning_radius", 1, true);
-    refresh_rate_ = ros::Rate(10);
     time_ = ros::Time::now();
 }
 
@@ -23,6 +22,7 @@ void MagellanSim::run() {
     while (node_handle_.ok()) {
         ros::spinOnce();
         Update();
+        ROS_INFO("Velocity: %0.2f\t Steering Angle: %0.2f", velocity_, commanded_radius_);
         refresh_rate_.sleep();
     }
 }
@@ -39,13 +39,13 @@ void MagellanSim::UpdateVelocity() {
     geometry_msgs::TwistWithCovarianceStamped twist_msg;
     twist_msg.header.stamp = time_;
     twist_msg.twist.twist.linear.x = velocity_;
-    velocity_publisher_.publish(&twist_msg);
+    velocity_publisher_.publish(twist_msg);
 }
 
 void MagellanSim::UpdateYaw() {
     std_msgs::Float64 course_msg;
     course_msg.data = commanded_radius_;
-    turning_radius_publisher_.publish(&course_msg);
+    turning_radius_publisher_.publish(course_msg);
 }
 
 /*
