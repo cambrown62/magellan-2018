@@ -17,14 +17,8 @@ PathFollower::PathFollower(ros::NodeHandle& nh,
                            double discretization,
                            double max_vel,
                            double max_acc,
-                           double kP,
-                           double kD) :
-        kP_(kP),
-<<<<<<< Updated upstream
-=======
+                           double stanley_gain) :
         stanley_gain_(stanley_gain),
->>>>>>> Stashed changes
-        kD_(kD),
         nh_(nh),
         tf_buffer_(),
         tf_listener_(tf_buffer_),
@@ -84,6 +78,9 @@ void PathFollower::Update() {
             break;
         closest_point = temp;
     }
+
+    
+    
     double cross_track_error = L2Norm(closest_point);
     path_start_index_ = std::distance(current_path_->poses.begin(), it) - 1;
     double lookahead_distance_ = 0.5 + std::max(cross_track_error, 1.0);
@@ -97,8 +94,7 @@ void PathFollower::Update() {
     double linear_velocity = L2Norm(current_odom_->twist.twist.linear);
 
     //command.steering_angle = std::copysign(lookahead_pose.pose.position.x * kP_, -lookahead_pose.pose.position.y);
-    command.steering_angle = robot_heading + atan(stanley_gain * cross_track_error / linear_velocity);
-
+    command.steering_angle = robot_heading + atan(stanley_gain_ * cross_track_error / linear_velocity);
 
     double estimated_remaining_distance = points_to_end * discretization_;
 
